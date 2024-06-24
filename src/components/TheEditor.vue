@@ -36,7 +36,7 @@ const value = `function hello() {
 const language = 'javascript'
 
 monaco.languages.registerInlineCompletionsProvider(language, {
-	provideInlineCompletions: async (
+  provideInlineCompletions: async (
     model: monaco.editor.ITextModel,
     position: monaco.Position,
   ) => {
@@ -59,16 +59,16 @@ monaco.languages.registerInlineCompletionsProvider(language, {
     const startColumn = position.column
     const endLineNumber = position.lineNumber
     const endColumn = position.column + completion.length
-		return Promise.resolve({
-			items: [
-				{
-					insertText: completion,
-					range: new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn),
-				},
-			]
-		})
-	},
-	freeInlineCompletions: () => {},
+    return Promise.resolve({
+      items: [
+        {
+          insertText: completion,
+          range: new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn),
+        },
+      ]
+    })
+  },
+  freeInlineCompletions: () => {},
 })
 
 onMounted(() => {
