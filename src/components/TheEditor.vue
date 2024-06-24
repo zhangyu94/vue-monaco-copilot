@@ -1,30 +1,30 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import * as monaco from 'monaco-editor'
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 import { completeCode } from '../services/completion'
 
 // Import the workers according to <https://github.com/vitejs/vite/discussions/1791#discussioncomment-321046>
 self.MonacoEnvironment = {
   getWorker(_, label) {
     if (label === 'json') {
-      return new jsonWorker()
+      return new JsonWorker()
     }
     if (label === 'css' || label === 'scss' || label === 'less') {
-      return new cssWorker()
+      return new CssWorker()
     }
     if (label === 'html' || label === 'handlebars' || label === 'razor') {
-      return new htmlWorker()
+      return new HtmlWorker()
     }
     if (label === 'typescript' || label === 'javascript') {
-      return new tsWorker()
+      return new TsWorker()
     }
-    return new editorWorker()
-  }
+    return new EditorWorker()
+  },
 }
 
 const container = ref<HTMLDivElement | null>(null)
@@ -59,20 +59,20 @@ monaco.languages.registerInlineCompletionsProvider(language, {
     const startColumn = position.column
     const endLineNumber = position.lineNumber
     const endColumn = position.column + completion.length
-    return Promise.resolve({
+    return {
       items: [
         {
           insertText: completion,
           range: new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn),
         },
       ]
-    })
+    }
   },
   freeInlineCompletions: () => {},
 })
 
 onMounted(() => {
-  if (container.value === null)  return
+  if (container.value === null) return
   monaco.editor.create(container.value, {
     value,
     language,
